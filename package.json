@@ -1,0 +1,52 @@
+{
+  "name": "hotel-pista-siete",
+  "version": "0.1.0",
+  "description": "Landing page for Hotel Pista Siete, Madrid-Barajas",
+  "productName": "Hotel Pista Siete",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "postinstall": "quasar prepare"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@quasar/extras": "^2.1.0",
+    "pinia": "^3.0.4",
+    "quasar": "^2.35.1",
+    "vue": "~3.5.44",
+    "vue-i18n": "^11.4.14",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.64.1",
+    "@quasar/app-vite": "^2.6.2",
+    "@types/node": "^26.6.5",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "@vue/test-utils": "^2.5.1",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^9.39.5",
+    "eslint-plugin-vue": "^10.11.1",
+    "jsdom": "^30.1.3",
+    "prettier": "^3.9.10",
+    "sass-embedded": "^1.105.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^7.3.7",
+    "vite-plugin-checker": "^0.14.5",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^2.2.12"
+  }
+}
