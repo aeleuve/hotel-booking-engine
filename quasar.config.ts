@@ -3,18 +3,26 @@ import { defineConfig } from '#q-app/wrappers'
 type FileEnv = Record<string, string | boolean | null | undefined>
 
 /**
- * Exposes only the hotel variables to the client bundle.
+ * Exposes only the hotel and Syrivo chat variables to the client bundle.
  * The API key ships only when the real Makcorps adapter is selected.
  */
 const exposeHotelEnv = (fileEnv: FileEnv = {}): FileEnv => {
   const adapter = String(process.env.HOTEL_ADAPTER ?? fileEnv.HOTEL_ADAPTER ?? 'mock')
   const hotelId = String(process.env.HOTEL_MAKCORPS_ID ?? fileEnv.HOTEL_MAKCORPS_ID ?? '229689')
   const apiKey = adapter === 'makcorps' ? String(fileEnv.HOTEL_API_KEY ?? '') : ''
-  return { HOTEL_ADAPTER: adapter, HOTEL_MAKCORPS_ID: hotelId, HOTEL_API_KEY: apiKey }
+  const syrivoApiUrl = String(process.env.SYRIVO_API_URL ?? fileEnv.SYRIVO_API_URL ?? '')
+  const syrivoTenant = String(process.env.SYRIVO_TENANT ?? fileEnv.SYRIVO_TENANT ?? '')
+  return {
+    HOTEL_ADAPTER: adapter,
+    HOTEL_MAKCORPS_ID: hotelId,
+    HOTEL_API_KEY: apiKey,
+    SYRIVO_API_URL: syrivoApiUrl,
+    SYRIVO_TENANT: syrivoTenant,
+  }
 }
 
 export default defineConfig((ctx) => ({
-  boot: ['~src/app/boot/repositories', '~src/app/boot/i18n'],
+  boot: ['~src/app/boot/repositories', '~src/app/boot/i18n', '~src/app/boot/syrivo-chat'],
   css: ['~src/app/styles/app.scss'],
   extras: ['material-icons'],
 
