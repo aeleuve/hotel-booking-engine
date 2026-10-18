@@ -1,4 +1,6 @@
 export { default as SyrivoChatBridge } from './ui/SyrivoChatBridge.vue'
 export { parseStayIntent, STAY_INTENT_EVENT } from './model/stay-intent'
+export { parseStaySearch, STAY_SEARCH_EVENT } from './model/stay-search'
+export type { StaySearchParse, StaySearchRequest } from './model/stay-search'
 export { mountSyrivoWidget, readSyrivoWidgetConfig } from './model/widget-loader'
 export type { SyrivoWidgetConfig } from './model/widget-loader'
