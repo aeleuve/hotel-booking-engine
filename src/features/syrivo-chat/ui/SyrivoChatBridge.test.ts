@@ -133,6 +133,51 @@ describe('SyrivoChatBridge', () => {
     wrapper.unmount()
   })
 
+  it('keeps the range the guest chose while the month search was running', async () => {
+    let release: () => void = () => undefined
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    const checkAvailability = vi.fn(async (query: StayQuery) => {
+      await gate
+      return priced(query)
+    })
+    const wrapper = mountBridge(checkAvailability)
+    const availability = useAvailabilityStore()
+    const flexible = useFlexibleSearchStore()
+    document.dispatchEvent(new CustomEvent('syrivo:stay-search', { detail: search }))
+    await vi.waitFor(() => expect(checkAvailability).toHaveBeenCalled())
+    const chosen = { checkIn: '2099-11-27', checkOut: '2099-11-29' }
+    availability.query = { ...availability.query, ...chosen }
+    flexible.noteChoice()
+    const search$ = vi.spyOn(availability, 'search').mockResolvedValue()
+    release()
+    await vi.waitFor(() => expect(flexible.status).toBe('done'))
+    await Promise.resolve()
+    expect(availability.query).toMatchObject(chosen)
+    expect(search$).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('keeps a form edit made while the month search was running', async () => {
+    let release: () => void = () => undefined
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    const checkAvailability = vi.fn(async (query: StayQuery) => {
+      await gate
+      return priced(query)
+    })
+    const wrapper = mountBridge(checkAvailability)
+    const availability = useAvailabilityStore()
+    const flexible = useFlexibleSearchStore()
+    document.dispatchEvent(new CustomEvent('syrivo:stay-search', { detail: search }))
+    await vi.waitFor(() => expect(checkAvailability).toHaveBeenCalled())
+    availability.query.adults = 1
+    release()
+    await vi.waitFor(() => expect(flexible.status).toBe('done'))
+    await Promise.resolve()
+    expect(availability.query.checkIn).not.toBe('2099-11-13')
+    expect(availability.query.adults).toBe(1)
+    wrapper.unmount()
+  })
+
   it('shows the too-many-guests state instead of searching', async () => {
     const checkAvailability = vi.fn()
     const wrapper = mountBridge(checkAvailability)

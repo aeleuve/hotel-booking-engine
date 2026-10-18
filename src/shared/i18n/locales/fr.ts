@@ -75,6 +75,11 @@ export default {
     error: 'Nous n’avons pas pu vérifier les prix. Réessayez ou appelez le {phone}.',
     tooManyGuests:
       'Ce nombre de voyageurs ne peut pas être réservé en ligne. Appelez le {phone} et nous vous trouverons des chambres.',
+    noResultsNoPhone: 'Plus de chambres à aucune de ces dates. Essayez un autre mois.',
+    errorNoPhone: 'Nous n’avons pas pu vérifier les prix. Réessayez.',
+    tooManyGuestsNoPhone:
+      'Ce nombre de voyageurs ne peut pas être réservé en ligne. Contactez l’hôtel et nous vous trouverons des chambres.',
+    noDates: 'Il ne reste plus de dates ce mois-ci. Essayez un autre mois.',
     choose: 'Voir les prix pour {range}',
   },
   summary: {

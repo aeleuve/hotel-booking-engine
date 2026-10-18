@@ -30,8 +30,12 @@ const onStaySearch = async (event: Event) => {
     return
   }
   showBookingForm()
+  const queryBefore = JSON.stringify(store.query)
+  const choicesBefore = flexible.choices
   const best = await flexible.run(parsed.request, localToday())
   if (!best) return
+  // The guest picked a range or edited the form while prices were loading: keep that.
+  if (flexible.choices !== choicesBefore || JSON.stringify(store.query) !== queryBefore) return
   store.query = { ...best.range, ...parsed.request.guests }
   void store.search(localToday())
 }

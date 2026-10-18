@@ -79,6 +79,12 @@ export default {
       'Wir konnten die Preise gerade nicht prüfen. Versuchen Sie es erneut oder rufen Sie {phone} an.',
     tooManyGuests:
       'So viele Gäste können nicht online buchen. Rufen Sie {phone} an, wir finden Zimmer für Sie.',
+    noResultsNoPhone:
+      'An keinem dieser Termine sind Zimmer frei. Versuchen Sie einen anderen Monat.',
+    errorNoPhone: 'Wir konnten die Preise gerade nicht prüfen. Versuchen Sie es erneut.',
+    tooManyGuestsNoPhone:
+      'So viele Gäste können nicht online buchen. Bitte kontaktieren Sie das Hotel, wir finden Zimmer für Sie.',
+    noDates: 'In diesem Monat sind keine Termine mehr frei. Versuchen Sie einen anderen Monat.',
     choose: 'Preise für {range} anzeigen',
   },
   summary: {

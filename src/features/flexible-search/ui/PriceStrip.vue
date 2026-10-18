@@ -11,11 +11,12 @@
         <span class="price-strip__meter" :style="{ '--done': progress }" aria-hidden="true" />
       </div>
       <p v-if="message" class="price-strip__message" role="alert">
-        <i18n-t :keypath="message" scope="global">
+        <i18n-t v-if="phone" :keypath="message" scope="global">
           <template #phone>
             <a :href="`tel:${phone.replace(/\s/g, '')}`">{{ phone }}</a>
           </template>
         </i18n-t>
+        <template v-else>{{ t(`${message}NoPhone`) }}</template>
       </p>
       <ol v-if="showBoard" class="price-strip__board">
         <li v-for="entry in entries" :key="entry.range.checkIn">
@@ -26,7 +27,7 @@
               'price-strip__flap--best': entry === best,
               'price-strip__flap--closed': isClosed(entry),
             }"
-            :disabled="isClosed(entry)"
+            :disabled="isDisabled(entry)"
             :aria-current="isCurrent(entry) ? 'true' : undefined"
             @click="choose(entry)"
           >
@@ -65,9 +66,10 @@ import { useFlexibleSearchStore, type FlexibleEntry } from '../model/flexible-se
 const { t, locale } = useI18n()
 const formatMoney = useFormatMoney()
 const availability = useAvailabilityStore()
-const { entries, status, done, best } = storeToRefs(useFlexibleSearchStore())
+const flexible = useFlexibleSearchStore()
+const { entries, status, done, best } = storeToRefs(flexible)
 const { profile } = storeToRefs(useHotelStore())
-const phone = computed(() => profile.value?.phone ?? '')
+const phone = computed(() => profile.value?.phone?.trim() ?? '')
 
 const hasPrices = computed(() => entries.value.some((entry) => entry.state === 'priced'))
 const showBoard = computed(
@@ -78,11 +80,14 @@ const progress = computed(() => (entries.value.length ? done.value / entries.val
 const message = computed(() => {
   if (status.value === 'too-many-guests') return 'flexible.tooManyGuests'
   if (status.value === 'error') return 'flexible.error'
+  if (status.value === 'done' && !entries.value.length) return 'flexible.noDates'
   if (status.value === 'done' && !hasPrices.value) return 'flexible.noResults'
   return null
 })
 
 const isClosed = ({ state }: FlexibleEntry) => state === 'unavailable' || state === 'failed'
+const isDisabled = ({ price, state }: FlexibleEntry) =>
+  !price || isClosed({ state } as FlexibleEntry)
 
 const isCurrent = ({ range }: FlexibleEntry) =>
   availability.query.checkIn === range.checkIn && availability.query.checkOut === range.checkOut
@@ -94,6 +99,7 @@ const rangeLabel = ({ range }: FlexibleEntry) =>
   `${dayLabel(range.checkIn)} – ${dayLabel(range.checkOut)}`
 
 const choose = ({ range }: FlexibleEntry) => {
+  flexible.noteChoice()
   availability.query = { ...availability.query, ...range }
   void availability.search(localToday())
 }

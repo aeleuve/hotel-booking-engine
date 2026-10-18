@@ -40,6 +40,8 @@ export const useFlexibleSearchStore = defineStore('flexible-search', () => {
   const entries = ref<FlexibleEntry[]>([])
   const status = ref<FlexibleSearchStatus>('idle')
   const done = ref(0)
+  /** How many times the guest picked a range from the strip. */
+  const choices = ref(0)
   let latestRun = 0
 
   const best = computed<FlexibleEntry | null>(
@@ -100,6 +102,11 @@ export const useFlexibleSearchStore = defineStore('flexible-search', () => {
     return best.value
   }
 
+  /** Records that the guest picked a range, so a running search will not override it. */
+  const noteChoice = () => {
+    choices.value++
+  }
+
   /** Shows that the guests do not fit in one room, without searching. */
   const rejectGuests = () => {
     clear()
@@ -115,5 +122,5 @@ export const useFlexibleSearchStore = defineStore('flexible-search', () => {
     status.value = 'idle'
   }
 
-  return { request, entries, status, done, best, run, rejectGuests, clear }
+  return { request, entries, status, done, choices, best, run, noteChoice, rejectGuests, clear }
 })

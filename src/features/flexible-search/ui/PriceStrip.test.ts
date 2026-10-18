@@ -23,10 +23,10 @@ const threeWeekends = [
   priced('2099-11-20', '2099-11-22', 200),
 ]
 
-const mountStrip = () => {
+const mountStrip = (profilePhone: string = phone) => {
   const repository = createFakeHotelRepository()
   const { pinia } = setupPiniaWith(provision(HOTEL_REPOSITORY, repository))
-  useHotelStore().profile = { phone } as HotelProfile
+  useHotelStore().profile = { phone: profilePhone } as HotelProfile
   const flexible = useFlexibleSearchStore()
   const availability = useAvailabilityStore()
   const mountIt = () =>
@@ -84,6 +84,7 @@ describe('PriceStrip', () => {
     expect(availability.query.checkOut).toBe('2099-11-08')
     expect(search).toHaveBeenCalledWith(localToday())
     expect(wrapper.findAll('ol button')[0]!.attributes('aria-current')).toBe('true')
+    expect(flexible.choices).toBe(1)
   })
 
   it('shows sold out and failed ranges as disabled', () => {
@@ -137,6 +138,55 @@ describe('PriceStrip', () => {
       `This many guests cannot be booked online. Call ${phone} and we will find rooms for you.`,
     )
     expect(wrapper.find('ol').exists()).toBe(false)
+  })
+
+  it('drops the phone sentence and the link when the hotel has no phone', async () => {
+    const { flexible, mountIt } = mountStrip('')
+    flexible.entries = [
+      {
+        range: { checkIn: '2099-11-06', checkOut: '2099-11-08' },
+        price: null,
+        state: 'unavailable',
+      },
+    ]
+    flexible.status = 'done'
+    const wrapper = mountIt()
+    expect(wrapper.get('[role="alert"]').text()).toBe(
+      'No rooms left on any of these dates. Try another month.',
+    )
+    expect(wrapper.find('[role="alert"] a').exists()).toBe(false)
+    flexible.status = 'error'
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('[role="alert"]').text()).toBe(
+      'We could not check prices right now. Please try again.',
+    )
+    flexible.rejectGuests()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('[role="alert"]').text()).toBe(
+      'This many guests cannot be booked online. Please contact the hotel and we will find rooms for you.',
+    )
+    expect(wrapper.find('[role="alert"] a').exists()).toBe(false)
+  })
+
+  it('says there are no dates left when the run produced no ranges', () => {
+    const { flexible, mountIt } = mountStrip()
+    flexible.entries = []
+    flexible.status = 'done'
+    expect(mountIt().get('[role="alert"]').text()).toBe(
+      'There are no dates left in that month. Try another month.',
+    )
+  })
+
+  it('disables ranges that have no price yet', () => {
+    const { flexible, mountIt } = mountStrip()
+    flexible.entries = [
+      priced('2099-11-06', '2099-11-08', 160),
+      { range: { checkIn: '2099-11-13', checkOut: '2099-11-15' }, price: null, state: 'pending' },
+    ]
+    flexible.status = 'searching'
+    const [ready, waiting] = mountIt().findAll('ol button')
+    expect(ready!.attributes('disabled')).toBeUndefined()
+    expect(waiting!.attributes('disabled')).toBeDefined()
   })
 
   it('renders nothing while idle', () => {

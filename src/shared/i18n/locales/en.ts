@@ -71,6 +71,11 @@ export default {
     error: 'We could not check prices right now. Please try again or call {phone}.',
     tooManyGuests:
       'This many guests cannot be booked online. Call {phone} and we will find rooms for you.',
+    noResultsNoPhone: 'No rooms left on any of these dates. Try another month.',
+    errorNoPhone: 'We could not check prices right now. Please try again.',
+    tooManyGuestsNoPhone:
+      'This many guests cannot be booked online. Please contact the hotel and we will find rooms for you.',
+    noDates: 'There are no dates left in that month. Try another month.',
     choose: 'Show prices for {range}',
   },
   summary: {
