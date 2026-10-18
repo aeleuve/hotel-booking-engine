@@ -10,6 +10,12 @@ export const formatDay = (isoDate: string, locale: string) =>
     new Date(`${isoDate.slice(0, 10)}T00:00:00Z`),
   )
 
+/** Short weekday, e.g. "Fri", for an ISO date read as a calendar day. */
+export const formatWeekday = (isoDate: string, locale: string) =>
+  new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(
+    new Date(`${isoDate.slice(0, 10)}T00:00:00Z`),
+  )
+
 /** Date and time in the visitor's zone for an ISO timestamp. */
 export const formatDateTime = (isoTimestamp: string, locale: string) =>
   new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(

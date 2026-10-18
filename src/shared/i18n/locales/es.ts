@@ -63,6 +63,24 @@ export default {
     payAtHotel: 'más {amount} en el hotel',
     showMore: 'Ver {n} tarifas más',
   },
+  flexible: {
+    title: 'Mejores precios del mes',
+    progress: 'Consultando {done} de {total} fechas',
+    best: 'Mejor precio',
+    unavailable: 'Completo',
+    failed: 'No disponible ahora',
+    noResults:
+      'No quedan habitaciones en ninguna de estas fechas. Prueba otro mes o llama al {phone}.',
+    error: 'No hemos podido consultar los precios ahora. Vuelve a intentarlo o llama al {phone}.',
+    tooManyGuests:
+      'No se puede reservar online para tantos huéspedes. Llama al {phone} y te buscamos habitaciones.',
+    noResultsNoPhone: 'No quedan habitaciones en ninguna de estas fechas. Prueba otro mes.',
+    errorNoPhone: 'No hemos podido consultar los precios ahora. Vuelve a intentarlo.',
+    tooManyGuestsNoPhone:
+      'No se puede reservar online para tantos huéspedes. Contacta con el hotel y te buscamos habitaciones.',
+    noDates: 'Ya no quedan fechas en ese mes. Prueba otro mes.',
+    choose: 'Ver precios para {range}',
+  },
   summary: {
     dates: 'Fechas',
     room: 'Habitación',
