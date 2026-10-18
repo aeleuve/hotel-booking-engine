@@ -3,21 +3,19 @@ import { defineConfig } from '#q-app/wrappers'
 type FileEnv = Record<string, string | boolean | null | undefined>
 
 /**
- * Exposes only the hotel and Syrivo chat variables to the client bundle.
- * The API key ships only when the real Makcorps adapter is selected.
+ * Exposes only the hotel and chat-widget variables to the client bundle.
+ * The LiteAPI key ships only when the live adapter is selected (sandbox keys only).
  */
 const exposeHotelEnv = (fileEnv: FileEnv = {}): FileEnv => {
-  const adapter = String(process.env.HOTEL_ADAPTER ?? fileEnv.HOTEL_ADAPTER ?? 'mock')
-  const hotelId = String(process.env.HOTEL_MAKCORPS_ID ?? fileEnv.HOTEL_MAKCORPS_ID ?? '229689')
-  const apiKey = adapter === 'makcorps' ? String(fileEnv.HOTEL_API_KEY ?? '') : ''
-  const syrivoApiUrl = String(process.env.SYRIVO_API_URL ?? fileEnv.SYRIVO_API_URL ?? '')
-  const syrivoTenant = String(process.env.SYRIVO_TENANT ?? fileEnv.SYRIVO_TENANT ?? '')
+  const pick = (name: string, fallback: string) =>
+    String(process.env[name] ?? fileEnv[name] ?? fallback)
+  const adapter = pick('HOTEL_ADAPTER', 'mock')
   return {
     HOTEL_ADAPTER: adapter,
-    HOTEL_MAKCORPS_ID: hotelId,
-    HOTEL_API_KEY: apiKey,
-    SYRIVO_API_URL: syrivoApiUrl,
-    SYRIVO_TENANT: syrivoTenant,
+    LITEAPI_HOTEL_ID: pick('LITEAPI_HOTEL_ID', 'lp42e6e'),
+    LITEAPI_KEY: adapter === 'liteapi' ? pick('LITEAPI_KEY', '') : '',
+    SYRIVO_API_URL: pick('SYRIVO_API_URL', ''),
+    SYRIVO_TENANT: pick('SYRIVO_TENANT', ''),
   }
 }
 

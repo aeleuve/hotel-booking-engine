@@ -29,3 +29,14 @@ export const createAppI18n = (locale: AppLocale = 'en') =>
   })
 
 export type { MessageSchema }
+
+/** Guest nationality LiteAPI prices for, by interface language. */
+export const NATIONALITY_BY_LOCALE: Record<AppLocale, string> = {
+  en: 'GB',
+  es: 'ES',
+  de: 'DE',
+  fr: 'FR',
+}
+
+export const nationalityFor = (locale: string) =>
+  NATIONALITY_BY_LOCALE[isAppLocale(locale) ? locale : 'en']

@@ -13,12 +13,13 @@ const stay = {
   checkOut: '2099-11-05',
   adults: 2,
   children: 1,
+  childrenAges: [7],
   rooms: 1,
 }
 
 describe('SyrivoChatBridge', () => {
   it('fills the search and runs it when the widget sends a stay intent', async () => {
-    const checkAvailability = vi.fn().mockResolvedValue({ query: stay, nights: 2, rates: [] })
+    const checkAvailability = vi.fn().mockResolvedValue({ query: stay, nights: 2, offers: [] })
     const repository = { checkAvailability } as unknown as HotelRepository
     const { pinia } = setupPiniaWith(provision(HOTEL_REPOSITORY, repository))
     const wrapper = mount(SyrivoChatBridge, {
@@ -30,7 +31,7 @@ describe('SyrivoChatBridge', () => {
       checkIn: '2099-11-03',
       checkOut: '2099-11-05',
       adults: 2,
-      children: 1,
+      childrenAges: [7],
       rooms: 1,
     })
     wrapper.unmount()

@@ -25,18 +25,19 @@
     </div>
 
     <div class="container site-header__bar">
-      <a href="#top" class="site-header__brand">
+      <router-link to="/" class="site-header__brand">
         <span class="site-header__mark" aria-hidden="true">7</span>
         <span>Pista Siete</span>
-      </a>
+      </router-link>
       <nav class="site-header__nav" :aria-label="t('nav.label')">
-        <a v-for="link in NAV_LINKS" :key="link" :href="`#${link}`">{{ t(`nav.${link}`) }}</a>
+        <a v-for="link in NAV_LINKS" :key="link" :href="`/#${link}`">{{ t(`nav.${link}`) }}</a>
+        <router-link to="/my-booking">{{ t('nav.myBooking') }}</router-link>
       </nav>
       <q-btn
         unelevated
         no-caps
         color="secondary"
-        href="#booking"
+        href="/#booking"
         :label="t('nav.book')"
         class="site-header__cta"
       />

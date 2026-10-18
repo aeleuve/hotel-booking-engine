@@ -19,7 +19,6 @@
     </div>
     <div id="booking" class="container hero__booking">
       <BookingSign />
-      <AvailabilityPanel v-if="profile" :phone="profile.phone" :email="profile.email" />
     </div>
   </section>
 </template>
@@ -28,7 +27,7 @@
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { useHotelStore } from 'src/entities/hotel'
-import { AvailabilityPanel, BookingSign } from 'src/features/check-availability'
+import { BookingSign } from 'src/features/check-availability'
 
 const { t } = useI18n()
 const { profile } = storeToRefs(useHotelStore())

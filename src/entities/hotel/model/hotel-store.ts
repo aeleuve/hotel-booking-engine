@@ -1,27 +1,25 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useHotelRepository } from './ports'
-import type { HotelProfile, Offer, ReviewSummary, RoomType } from './types'
+import type { HotelProfile, ReviewSummary, RoomType } from './types'
 
 type LoadStatus = 'idle' | 'loading' | 'ready' | 'error'
 
-/** Static hotel content: profile, rooms, offers and reviews. */
+/** Hotel content: profile, room types and reviews. */
 export const useHotelStore = defineStore('hotel', () => {
   const repository = useHotelRepository()
   const status = ref<LoadStatus>('idle')
   const profile = ref<HotelProfile | null>(null)
   const rooms = ref<RoomType[]>([])
-  const offers = ref<Offer[]>([])
   const reviews = ref<ReviewSummary | null>(null)
 
   const load = async () => {
     if (status.value === 'loading' || status.value === 'ready') return
     status.value = 'loading'
     try {
-      ;[profile.value, rooms.value, offers.value, reviews.value] = await Promise.all([
+      ;[profile.value, rooms.value, reviews.value] = await Promise.all([
         repository.getProfile(),
         repository.listRooms(),
-        repository.listOffers(),
         repository.getReviewSummary(),
       ])
       status.value = 'ready'
@@ -30,5 +28,5 @@ export const useHotelStore = defineStore('hotel', () => {
     }
   }
 
-  return { status, profile, rooms, offers, reviews, load }
+  return { status, profile, rooms, reviews, load }
 })

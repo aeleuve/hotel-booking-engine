@@ -19,7 +19,7 @@ describe('availability store', () => {
     const store = storeWith()
     await store.search(today)
     expect(store.status).toBe('done')
-    expect(store.result?.rates).toHaveLength(1)
+    expect(store.result?.offers).toHaveLength(1)
   })
 
   it('rejects an invalid stay without calling the repository', async () => {
@@ -42,7 +42,7 @@ describe('availability store', () => {
     const store = storeWith(() => new Promise((resolve) => resolvers.push(resolve)))
     const first = store.search(today)
     const second = store.search(today)
-    const latest = { query: store.query, nights: 2, rates: [] }
+    const latest = { query: store.query, nights: 2, offers: [] }
     resolvers[1]!(latest)
     resolvers[0]!({ ...latest, nights: 9 })
     await Promise.all([first, second])
