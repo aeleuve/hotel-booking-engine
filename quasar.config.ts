@@ -2,22 +2,30 @@ import { defineConfig } from '#q-app/wrappers'
 
 type FileEnv = Record<string, string | boolean | null | undefined>
 
+/** Public Syrivo chat server for production builds; the shell env still overrides it. */
+const PRODUCTION_SYRIVO: FileEnv = {
+  SYRIVO_API_URL: 'https://kiosk.aeleuve.dev',
+  SYRIVO_TENANT: 'hotel-pista-siete',
+}
+
 /**
  * Exposes only the hotel and chat-widget variables to the client bundle.
  * The LiteAPI key ships only when the live adapter is selected (sandbox keys only).
  */
-const exposeHotelEnv = (fileEnv: FileEnv = {}): FileEnv => {
-  const pick = (name: string, fallback: string) =>
-    String(process.env[name] ?? fileEnv[name] ?? fallback)
-  const adapter = pick('HOTEL_ADAPTER', 'mock')
-  return {
-    HOTEL_ADAPTER: adapter,
-    LITEAPI_HOTEL_ID: pick('LITEAPI_HOTEL_ID', 'lp42e6e'),
-    LITEAPI_KEY: adapter === 'liteapi' ? pick('LITEAPI_KEY', '') : '',
-    SYRIVO_API_URL: pick('SYRIVO_API_URL', ''),
-    SYRIVO_TENANT: pick('SYRIVO_TENANT', ''),
+const exposeHotelEnv =
+  (defaults: FileEnv) =>
+  (fileEnv: FileEnv = {}): FileEnv => {
+    const pick = (name: string, fallback: string) =>
+      String(process.env[name] ?? fileEnv[name] ?? defaults[name] ?? fallback)
+    const adapter = pick('HOTEL_ADAPTER', 'mock')
+    return {
+      HOTEL_ADAPTER: adapter,
+      LITEAPI_HOTEL_ID: pick('LITEAPI_HOTEL_ID', 'lp42e6e'),
+      LITEAPI_KEY: adapter === 'liteapi' ? pick('LITEAPI_KEY', '') : '',
+      SYRIVO_API_URL: pick('SYRIVO_API_URL', ''),
+      SYRIVO_TENANT: pick('SYRIVO_TENANT', ''),
+    }
   }
-}
 
 export default defineConfig((ctx) => ({
   boot: ['~src/app/boot/repositories', '~src/app/boot/i18n', '~src/app/boot/syrivo-chat'],
@@ -35,7 +43,7 @@ export default defineConfig((ctx) => ({
     typescript: { strict: true, vueShim: true },
     vueRouterMode: 'history',
     envFiles: ctx.dev ? ['.env.development'] : [],
-    envFilter: exposeHotelEnv,
+    envFilter: exposeHotelEnv(ctx.prod ? PRODUCTION_SYRIVO : {}),
   },
 
   devServer: { open: false, port: 9000 },
