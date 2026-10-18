@@ -1,3 +1,4 @@
+export { default as PriceStrip } from './ui/PriceStrip.vue'
 export {
   SEARCH_CONCURRENCY,
   useFlexibleSearchStore,

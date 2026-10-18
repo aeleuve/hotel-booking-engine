@@ -61,6 +61,18 @@ export default {
     payAtHotel: 'plus {amount} at the hotel',
     showMore: 'Show {n} more rates',
   },
+  flexible: {
+    title: 'Best prices this month',
+    progress: 'Checking {done} of {total} dates',
+    best: 'Best price',
+    unavailable: 'Sold out',
+    failed: 'Not available right now',
+    noResults: 'No rooms left on any of these dates. Try another month or call {phone}.',
+    error: 'We could not check prices right now. Please try again or call {phone}.',
+    tooManyGuests:
+      'This many guests cannot be booked online. Call {phone} and we will find rooms for you.',
+    choose: 'Show prices for {range}',
+  },
   summary: {
     dates: 'Dates',
     room: 'Room',

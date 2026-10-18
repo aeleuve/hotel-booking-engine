@@ -1,6 +1,7 @@
 <template>
   <q-page>
     <HeroSection />
+    <PriceStrip />
     <AvailabilityResults />
     <RoomsSection />
     <OffersSection />
@@ -12,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { PriceStrip } from 'src/features/flexible-search'
 import { AvailabilityResults } from 'src/widgets/availability-results'
 import { FaqSection } from 'src/widgets/faq-section'
 import { HeroSection } from 'src/widgets/hero'

@@ -64,6 +64,19 @@ export default {
     payAtHotel: 'plus {amount} à l’hôtel',
     showMore: 'Voir {n} tarifs de plus',
   },
+  flexible: {
+    title: 'Meilleurs prix du mois',
+    progress: 'Vérification de {done} dates sur {total}',
+    best: 'Meilleur prix',
+    unavailable: 'Complet',
+    failed: 'Indisponible pour le moment',
+    noResults:
+      'Plus de chambres à aucune de ces dates. Essayez un autre mois ou appelez le {phone}.',
+    error: 'Nous n’avons pas pu vérifier les prix. Réessayez ou appelez le {phone}.',
+    tooManyGuests:
+      'Ce nombre de voyageurs ne peut pas être réservé en ligne. Appelez le {phone} et nous vous trouverons des chambres.',
+    choose: 'Voir les prix pour {range}',
+  },
   summary: {
     dates: 'Dates',
     room: 'Chambre',
