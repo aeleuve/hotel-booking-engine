@@ -177,6 +177,19 @@ describe('PriceStrip', () => {
     )
   })
 
+  it('shows the no-dates message without a phone sentence when the hotel has no phone', () => {
+    const { flexible, mountIt } = mountStrip('')
+    flexible.entries = []
+    flexible.status = 'done'
+    const wrapper = mountIt()
+    expect(wrapper.get('[role="alert"]').text()).toBe(
+      'There are no dates left in that month. Try another month.',
+    )
+    expect(wrapper.find('[role="alert"] a').exists()).toBe(false)
+    expect(wrapper.html()).not.toContain('tel:')
+    expect(wrapper.text()).not.toContain('flexible.')
+  })
+
   it('disables ranges that have no price yet', () => {
     const { flexible, mountIt } = mountStrip()
     flexible.entries = [

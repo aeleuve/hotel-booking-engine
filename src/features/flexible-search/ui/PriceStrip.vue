@@ -16,7 +16,9 @@
             <a :href="`tel:${phone.replace(/\s/g, '')}`">{{ phone }}</a>
           </template>
         </i18n-t>
-        <template v-else>{{ t(`${message}NoPhone`) }}</template>
+        <template v-else>{{
+          t(message === 'flexible.noDates' ? message : `${message}NoPhone`)
+        }}</template>
       </p>
       <ol v-if="showBoard" class="price-strip__board">
         <li v-for="entry in entries" :key="entry.range.checkIn">
