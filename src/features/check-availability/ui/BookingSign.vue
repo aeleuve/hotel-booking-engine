@@ -26,7 +26,11 @@
         />
       </span>
     </label>
-    <GuestPicker v-model:query="query" class="booking-sign__cell" />
+    <GuestPicker
+      v-model:query="query"
+      class="booking-sign__cell"
+      :show-age-errors="error === 'child-age-missing'"
+    />
     <button class="booking-sign__submit" type="submit" :aria-busy="status === 'searching'">
       <span>{{ status === 'searching' ? t('booking.searching') : t('booking.submit') }}</span>
       <q-spinner v-if="status === 'searching'" size="1.25rem" />

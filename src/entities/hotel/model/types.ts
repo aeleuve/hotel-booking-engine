@@ -1,61 +1,71 @@
 /** ISO calendar date, `YYYY-MM-DD`. */
 export type IsoDate = string
 
-export type CurrencyCode = 'EUR'
+/** ISO timestamp, e.g. `2026-11-08T10:00:00Z`. */
+export type IsoTimestamp = string
 
 export interface Money {
   amount: number
-  currency: CurrencyCode
+  currency: string
 }
 
 export interface StayQuery {
   checkIn: IsoDate
   checkOut: IsoDate
   adults: number
-  children: number
+  /** One age (0–17) per child; `null` until the guest picks it. */
+  childrenAges: (number | null)[]
   rooms: number
 }
 
-/** Price offered by one sales channel for a stay. */
-export interface VendorRate {
-  vendor: string
-  nightly: Money | null
-  total: Money | null
-  tax: Money | null
+/** Guests sharing one room. */
+export interface Occupancy {
+  adults: number
+  childrenAges: number[]
+}
+
+export interface Board {
+  code: string
+  name: string
+}
+
+/** One bookable price for one room type. */
+export interface RateOffer {
+  offerId: string
+  roomId: string | null
+  name: string
+  board: Board
+  refundable: boolean
+  freeCancellationUntil: IsoTimestamp | null
+  total: Money
+  taxesIncluded: Money | null
+  /** Fees not in `total`, paid at the property. */
+  payAtHotel: Money | null
 }
 
 export interface Availability {
   query: StayQuery
   nights: number
-  rates: VendorRate[]
+  offers: RateOffer[]
 }
-
-export type RoomId = 'standard' | 'executive' | 'suite'
 
 export interface RoomType {
-  id: RoomId
-  sizeM2: number
+  id: string
+  name: string
+  sizeM2: number | null
   maxGuests: number
-  bed: 'double' | 'king'
-  imageUrl: string
-  fromPrice: Money
-}
-
-export type OfferId = 'early-booking' | 'crew-rest' | 'meeting-day'
-
-export interface Offer {
-  id: OfferId
-  discountPercent: number
-  fromPrice: Money
-  imageUrl: string
+  beds: string[]
+  photoUrls: string[]
 }
 
 export interface ReviewQuote {
+  id: string
   author: string
   country: string
   /** BCP 47 tag of the quote's original language. */
   language: string
   score: number
+  headline: string
   text: string
 }
 
@@ -71,14 +81,18 @@ export interface GeoPoint {
 }
 
 export interface HotelProfile {
+  /** Brand shown to guests. */
   name: string
+  /** Property the inventory comes from. */
+  propertyName: string
   stars: number
   address: string
   phone: string
   whatsapp: string
   email: string
   location: GeoPoint
-  minutesToAirport: number
+  checkInFrom: string
+  checkOutUntil: string
   heroImageUrl: string
   /** Shuttle departures from the hotel door, `HH:mm`. */
   shuttleDepartures: string[]

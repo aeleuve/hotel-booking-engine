@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addDays, countNights, defaultStay, validateStay } from './stay'
+import { addDays, countNights, defaultStay, toOccupancies, validateStay } from './stay'
 
 const today = '2026-10-15'
 
@@ -17,7 +17,7 @@ describe('stay', () => {
       checkIn: today,
       checkOut: '2026-10-16',
       adults: 2,
-      children: 0,
+      childrenAges: [],
       rooms: 1,
     })
   })
@@ -27,11 +27,20 @@ describe('stay', () => {
     [{ checkIn: '2026-10-16', checkOut: '2026-10-16' }, 'check-out-before-check-in'],
     [{ checkIn: '2026-10-16', checkOut: '2026-12-01' }, 'too-many-nights'],
     [{ adults: 0 }, 'no-adults'],
+    [{ childrenAges: [4, null] }, 'child-age-missing'],
   ])('rejects %o with %s', (patch, error) => {
     expect(validateStay({ ...defaultStay(today), ...patch }, today)).toBe(error)
   })
 
   it('accepts a valid stay', () => {
     expect(validateStay(defaultStay(today), today)).toBeNull()
+  })
+
+  it('spreads guests across rooms', () => {
+    const query = { ...defaultStay(today), adults: 3, childrenAges: [5, 9, 12], rooms: 2 }
+    expect(toOccupancies(query)).toEqual([
+      { adults: 2, childrenAges: [5, 12] },
+      { adults: 1, childrenAges: [9] },
+    ])
   })
 })

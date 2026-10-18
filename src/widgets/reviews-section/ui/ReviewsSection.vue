@@ -9,7 +9,7 @@
         <p class="reviews__count">{{ t('reviews.count', { count: formattedCount }) }}</p>
       </div>
       <div class="reviews__quotes">
-        <ReviewQuoteCard v-for="quote in reviews.quotes" :key="quote.author" :quote="quote" />
+        <ReviewQuoteCard v-for="quote in reviews.quotes" :key="quote.id" :quote="quote" />
       </div>
     </div>
   </section>

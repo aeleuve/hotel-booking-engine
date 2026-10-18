@@ -1,7 +1,7 @@
 # Project rules
 
 You are an expert in Quasar, VueJS, Typescript.
-For the api we will connect a mock example of https://api.makcorps.com based in hotels data. The api key is in .env.development file.
+For the api we use LiteAPI by Nuitee (https://docs.liteapi.travel, sandbox) for hotel content, rates and bookings; a LiteAPI-shaped mock adapter backs tests. The api key is in .env.development file (`LITEAPI_KEY`).
 
 ## Conventions
 

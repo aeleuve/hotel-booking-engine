@@ -1,6 +1,7 @@
 <template>
   <q-page>
     <HeroSection />
+    <AvailabilityResults />
     <RoomsSection />
     <OffersSection />
     <ServicesSection />
@@ -11,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { AvailabilityResults } from 'src/widgets/availability-results'
 import { FaqSection } from 'src/widgets/faq-section'
 import { HeroSection } from 'src/widgets/hero'
 import { LocationSection } from 'src/widgets/location-section'

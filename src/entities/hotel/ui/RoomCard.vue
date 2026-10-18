@@ -1,38 +1,33 @@
 <template>
   <article class="room-card">
     <img
+      v-if="room.photoUrls[0]"
       class="room-card__image"
-      :src="room.imageUrl"
-      :alt="name"
+      :src="room.photoUrls[0]"
+      :alt="room.name"
       loading="lazy"
       width="900"
       height="675"
     />
-    <h3 class="room-card__name">{{ name }}</h3>
-    <p class="room-card__text">{{ t(`rooms.items.${room.id}.text`) }}</p>
+    <h3 class="room-card__name">{{ room.name }}</h3>
     <ul class="room-card__facts">
-      <li>
+      <li v-if="room.sizeM2">
         <q-icon name="square_foot" aria-hidden="true" />{{ t('rooms.size', { n: room.sizeM2 }) }}
       </li>
       <li>
         <q-icon name="group" aria-hidden="true" />{{ t('rooms.guests', { n: room.maxGuests }) }}
       </li>
-      <li><q-icon name="bed" aria-hidden="true" />{{ t(`rooms.bed.${room.bed}`) }}</li>
+      <li v-for="bed in room.beds" :key="bed"><q-icon name="bed" aria-hidden="true" />{{ bed }}</li>
     </ul>
-    <p class="room-card__price">{{ t('rooms.from', { price: formatMoney(room.fromPrice) }) }}</p>
   </article>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { RoomType } from '../model/types'
-import { useFormatMoney } from '../model/use-format-money'
 
-const props = defineProps<{ room: RoomType }>()
+defineProps<{ room: RoomType }>()
 const { t } = useI18n()
-const formatMoney = useFormatMoney()
-const name = computed(() => t(`rooms.items.${props.room.id}.name`))
 </script>
 
 <style scoped lang="scss">
@@ -47,7 +42,7 @@ const name = computed(() => t(`rooms.items.${props.room.id}.name`))
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: var(--radius-sign);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     background: var(--c-concrete-deep);
   }
 
@@ -55,17 +50,14 @@ const name = computed(() => t(`rooms.items.${props.room.id}.name`))
     font-size: var(--fs-h3);
   }
 
-  &__text {
-    color: var(--c-tarmac-soft);
-  }
-
   &__facts {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.25rem;
     margin: 0;
-    padding: 0;
+    padding: 0.75rem 0 0;
     list-style: none;
+    border-top: 2px solid var(--c-tarmac);
     font-size: var(--fs-small);
 
     li {
@@ -77,13 +69,6 @@ const name = computed(() => t(`rooms.items.${props.room.id}.name`))
     .q-icon {
       font-size: 1.15rem;
     }
-  }
-
-  &__price {
-    margin-top: auto;
-    padding-top: 0.75rem;
-    border-top: 2px solid var(--c-tarmac);
-    font-weight: 700;
   }
 }
 </style>

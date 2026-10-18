@@ -28,20 +28,54 @@ export default defineConfigWithVueTs(
   vueTsConfigs.recommended,
   {
     languageOptions: {
-      globals: { process: 'readonly', document: 'readonly', navigator: 'readonly', localStorage: 'readonly' },
+      globals: {
+        process: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+      },
     },
     rules: {
       'prefer-arrow-callback': 'error',
       'func-style': ['error', 'expression'],
       'vue/multi-word-component-names': 'off',
+      'vue/no-undef-components': [
+        'error',
+        { ignorePatterns: ['^q-', '^router-(link|view)$', '^i18n-t$', '^syrivo-chat$'] },
+      ],
     },
   },
   restrict(['src/pages/**'], APP, ADAPTERS),
   restrict(['src/widgets/**'], APP, PAGES, ADAPTERS),
   restrict(['src/features/**'], APP, PAGES, WIDGETS, ADAPTERS),
-  restrict(['src/entities/*/model/**', 'src/entities/*/ui/**', 'src/entities/*/index.ts'], APP, PAGES, WIDGETS, FEATURES, ADAPTERS),
-  restrict(['src/entities/*/api/**'], APP, PAGES, WIDGETS, FEATURES, pattern(['src/shared/api/supabase*'], 'Adapters receive their client, never import the instance.')),
+  restrict(
+    ['src/entities/*/model/**', 'src/entities/*/ui/**', 'src/entities/*/index.ts'],
+    APP,
+    PAGES,
+    WIDGETS,
+    FEATURES,
+    ADAPTERS,
+  ),
+  restrict(
+    ['src/entities/*/api/**'],
+    APP,
+    PAGES,
+    WIDGETS,
+    FEATURES,
+    pattern(
+      ['src/shared/api/supabase*'],
+      'Adapters receive their client, never import the instance.',
+    ),
+  ),
   restrict(['src/shared/**'], APP, PAGES, WIDGETS, FEATURES, ENTITIES),
-  restrict(['src/shared/{ui,lib,i18n}/**'], APP, PAGES, WIDGETS, FEATURES, ENTITIES, pattern(['src/shared/api/*', '@supabase/*'], 'Only shared/api talks to backends.')),
+  restrict(
+    ['src/shared/{ui,lib,i18n}/**'],
+    APP,
+    PAGES,
+    WIDGETS,
+    FEATURES,
+    ENTITIES,
+    pattern(['src/shared/api/*', '@supabase/*'], 'Only shared/api talks to backends.'),
+  ),
   prettierSkipFormatting,
 )

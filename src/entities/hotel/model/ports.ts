@@ -1,11 +1,10 @@
 import { inject, type InjectionKey } from 'vue'
-import type { Availability, HotelProfile, Offer, ReviewSummary, RoomType, StayQuery } from './types'
+import type { Availability, HotelProfile, ReviewSummary, RoomType, StayQuery } from './types'
 
-/** Port: everything the landing needs to know about the hotel. */
+/** Port: everything the landing needs to know about the hotel and its prices. */
 export interface HotelRepository {
   getProfile(): Promise<HotelProfile>
   listRooms(): Promise<RoomType[]>
-  listOffers(): Promise<Offer[]>
   getReviewSummary(): Promise<ReviewSummary>
   checkAvailability(query: StayQuery): Promise<Availability>
 }

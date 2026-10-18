@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { PictogramItem } from 'src/shared/ui'
+import { PictogramItem, SectionHeader } from 'src/shared/ui'
 
 const SERVICES = [
   ['shuttle', 'airport_shuttle'],

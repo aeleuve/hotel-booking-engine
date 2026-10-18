@@ -17,9 +17,20 @@ describe('parseStayIntent', () => {
       checkIn: '2026-11-03',
       checkOut: '2026-11-05',
       adults: 2,
-      children: 0,
+      childrenAges: [],
       rooms: 1,
     })
+  })
+
+  it('keeps valid child ages and leaves missing ones to pick', () => {
+    expect(parseStayIntent({ ...detail, children: 2, childrenAges: [4, 9] })?.childrenAges).toEqual(
+      [4, 9],
+    )
+    expect(parseStayIntent({ ...detail, children: 2, childrenAges: [4] })?.childrenAges).toEqual([
+      null,
+      null,
+    ])
+    expect(parseStayIntent({ ...detail, children: 1 })?.childrenAges).toEqual([null])
   })
 
   it('accepts the booking form limits', () => {
@@ -28,7 +39,7 @@ describe('parseStayIntent', () => {
       checkIn: '2026-11-03',
       checkOut: '2026-11-05',
       adults: MAX_ADULTS,
-      children: MAX_CHILDREN,
+      childrenAges: Array.from({ length: MAX_CHILDREN }, () => null),
       rooms: MAX_ADULTS,
     })
   })

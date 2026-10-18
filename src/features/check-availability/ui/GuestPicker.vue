@@ -5,7 +5,7 @@
       <span class="guest-picker__label">{{ t('booking.guests') }}</span>
       <span class="guest-picker__value">{{ summary }}</span>
     </span>
-    <q-menu anchor="bottom left" self="top left" :offset="[0, 8]" class="guest-picker__menu">
+    <q-menu anchor="bottom left" self="top left" :offset="[0, 8]">
       <div class="guest-picker__panel">
         <CounterField
           v-model="query.adults"
@@ -13,7 +13,22 @@
           :min="1"
           :max="MAX_ADULTS"
         />
-        <CounterField v-model="query.children" :label="t('booking.children')" :max="MAX_CHILDREN" />
+        <CounterField v-model="childrenCount" :label="t('booking.children')" :max="MAX_CHILDREN" />
+        <q-select
+          v-for="(age, index) in query.childrenAges"
+          :key="index"
+          :model-value="age"
+          :options="AGE_OPTIONS"
+          :label="t('booking.childAge', { n: index + 1 })"
+          :error="age === null && showAgeErrors"
+          :error-message="t('booking.errors.child-age-missing')"
+          emit-value
+          map-options
+          outlined
+          dense
+          class="q-mb-sm"
+          @update:model-value="(value: number) => (query.childrenAges[index] = value)"
+        />
         <CounterField
           v-model="query.rooms"
           :label="t('booking.rooms')"
@@ -36,13 +51,39 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { MAX_ADULTS, MAX_CHILDREN, type StayQuery } from 'src/entities/hotel'
+import {
+  countGuests,
+  MAX_ADULTS,
+  MAX_CHILD_AGE,
+  MAX_CHILDREN,
+  type StayQuery,
+} from 'src/entities/hotel'
 import { CounterField, SignPictogram } from 'src/shared/ui'
 
 const query = defineModel<StayQuery>('query', { required: true })
+defineProps<{ showAgeErrors?: boolean }>()
 const { t } = useI18n()
 
-const summary = computed(() => t('booking.guestSummary', { ...query.value }, query.value.rooms))
+const AGE_OPTIONS = Array.from({ length: MAX_CHILD_AGE + 1 }, (_, age) => ({
+  value: age,
+  label: String(age),
+}))
+
+const childrenCount = computed({
+  get: () => query.value.childrenAges.length,
+  set: (count: number) => {
+    const ages = query.value.childrenAges.slice(0, count)
+    query.value.childrenAges = [...ages, ...Array.from({ length: count - ages.length }, () => null)]
+  },
+})
+
+const summary = computed(() =>
+  t(
+    'booking.guestSummary',
+    { guests: countGuests(query.value), rooms: query.value.rooms },
+    query.value.rooms,
+  ),
+)
 
 watch(
   () => query.value.adults,
