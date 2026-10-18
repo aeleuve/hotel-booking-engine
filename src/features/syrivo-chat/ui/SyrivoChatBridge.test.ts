@@ -1,7 +1,14 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { HOTEL_REPOSITORY, type HotelRepository } from 'src/entities/hotel'
+import {
+  HOTEL_REPOSITORY,
+  MAX_ADULTS,
+  type Availability,
+  type HotelRepository,
+  type StayQuery,
+} from 'src/entities/hotel'
 import { useAvailabilityStore } from 'src/features/check-availability'
+import { useFlexibleSearchStore } from 'src/features/flexible-search'
 import { provision, setupPiniaWith } from 'src/shared/lib/testing'
 import SyrivoChatBridge from './SyrivoChatBridge.vue'
 
@@ -16,6 +23,50 @@ const stay = {
   childrenAges: [7],
   rooms: 1,
 }
+
+const search = {
+  version: 1,
+  month: '2099-11',
+  nights: 2,
+  checkInDay: 'friday',
+  adults: 2,
+  children: 1,
+  childrenAges: [6],
+  rooms: 1,
+}
+
+const prices: Record<string, number> = {
+  '2099-11-06': 160,
+  '2099-11-13': 120,
+  '2099-11-20': 140,
+  '2099-11-27': 200,
+}
+
+const offerAt = (amount: number) => ({
+  offerId: `o-${amount}`,
+  roomId: 'std',
+  name: 'Standard',
+  board: { code: 'RO', name: 'Room only' },
+  refundable: true,
+  freeCancellationUntil: null,
+  total: { amount, currency: 'EUR' },
+  taxesIncluded: null,
+  payAtHotel: null,
+})
+
+const mountBridge = (checkAvailability: ReturnType<typeof vi.fn>) => {
+  const repository = { checkAvailability } as unknown as HotelRepository
+  const { pinia } = setupPiniaWith(provision(HOTEL_REPOSITORY, repository))
+  return mount(SyrivoChatBridge, {
+    global: { plugins: [pinia], provide: { [HOTEL_REPOSITORY as symbol]: repository } },
+  })
+}
+
+const priced = (query: StayQuery): Availability => ({
+  query,
+  nights: 2,
+  offers: [offerAt(prices[query.checkIn] ?? 999)],
+})
 
 describe('SyrivoChatBridge', () => {
   it('fills the search and runs it when the widget sends a stay intent', async () => {
@@ -63,5 +114,62 @@ describe('SyrivoChatBridge', () => {
     document.dispatchEvent(new CustomEvent('syrivo:stay-intent', { detail: stay }))
     await Promise.resolve()
     expect(checkAvailability).not.toHaveBeenCalled()
+  })
+
+  it('runs the month search, then loads and searches the cheapest range', async () => {
+    const checkAvailability = vi.fn(async (query: StayQuery) => priced(query))
+    const wrapper = mountBridge(checkAvailability)
+    document.dispatchEvent(new CustomEvent('syrivo:stay-search', { detail: search }))
+    const availability = useAvailabilityStore()
+    await vi.waitFor(() => expect(['searching', 'done']).toContain(availability.status))
+    expect(availability.query).toEqual({
+      checkIn: '2099-11-13',
+      checkOut: '2099-11-15',
+      adults: 2,
+      childrenAges: [6],
+      rooms: 1,
+    })
+    expect(useFlexibleSearchStore().entries).toHaveLength(4)
+    wrapper.unmount()
+  })
+
+  it('shows the too-many-guests state instead of searching', async () => {
+    const checkAvailability = vi.fn()
+    const wrapper = mountBridge(checkAvailability)
+    document.dispatchEvent(
+      new CustomEvent('syrivo:stay-search', { detail: { ...search, adults: MAX_ADULTS + 1 } }),
+    )
+    await Promise.resolve()
+    expect(useFlexibleSearchStore().status).toBe('too-many-guests')
+    expect(checkAvailability).not.toHaveBeenCalled()
+    wrapper.unmount()
+  })
+
+  it('ignores malformed stay-search details and stops listening after unmount', async () => {
+    const checkAvailability = vi.fn(async (query: StayQuery) => priced(query))
+    const wrapper = mountBridge(checkAvailability)
+    document.dispatchEvent(
+      new CustomEvent('syrivo:stay-search', { detail: { ...search, version: 2 } }),
+    )
+    await Promise.resolve()
+    expect(useFlexibleSearchStore().status).toBe('idle')
+    expect(checkAvailability).not.toHaveBeenCalled()
+    wrapper.unmount()
+    document.dispatchEvent(new CustomEvent('syrivo:stay-search', { detail: search }))
+    await Promise.resolve()
+    expect(useFlexibleSearchStore().status).toBe('idle')
+    expect(checkAvailability).not.toHaveBeenCalled()
+  })
+
+  it('clears an old month search when a concrete stay intent arrives', async () => {
+    const checkAvailability = vi.fn(async (query: StayQuery) => priced(query))
+    const wrapper = mountBridge(checkAvailability)
+    document.dispatchEvent(new CustomEvent('syrivo:stay-search', { detail: search }))
+    const flexible = useFlexibleSearchStore()
+    await vi.waitFor(() => expect(flexible.status).toBe('done'))
+    document.dispatchEvent(new CustomEvent('syrivo:stay-intent', { detail: stay }))
+    expect(flexible.status).toBe('idle')
+    expect(flexible.entries).toEqual([])
+    wrapper.unmount()
   })
 })
