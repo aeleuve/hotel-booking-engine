@@ -23,6 +23,7 @@
     "@quasar/extras": "^2.1.0",
     "pinia": "^3.0.4",
     "quasar": "^2.35.1",
+    "three": "^0.186.1",
     "vue": "~3.5.44",
     "vue-i18n": "^11.4.14",
     "vue-router": "^4.6.4"
@@ -32,6 +33,7 @@
     "@playwright/test": "^1.64.1",
     "@quasar/app-vite": "^2.6.2",
     "@types/node": "^26.6.5",
+    "@types/three": "^0.186.0",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.9.0",

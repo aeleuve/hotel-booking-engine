@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <HeroSection />
+    <ImmersiveJourney />
     <PriceStrip />
     <AvailabilityResults />
     <RoomsSection />
@@ -16,7 +16,7 @@
 import { PriceStrip } from 'src/features/flexible-search'
 import { AvailabilityResults } from 'src/widgets/availability-results'
 import { FaqSection } from 'src/widgets/faq-section'
-import { HeroSection } from 'src/widgets/hero'
+import { ImmersiveJourney } from 'src/widgets/immersive-journey'
 import { LocationSection } from 'src/widgets/location-section'
 import { OffersSection } from 'src/widgets/offers-section'
 import { ReviewsSection } from 'src/widgets/reviews-section'
